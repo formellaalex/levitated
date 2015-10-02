@@ -9,13 +9,19 @@ var pong = {"pong": true};
 
 
 
-function updateNote(note, next){
-	
-	var update = db.prepare("UPDATE NOTES SET TITLE = ?, MESSAGE = ?, MODIFY_DATE = ? WHERE ID = ?");
-	update.run(note.title, note.message, note.modifyDate, note.id, function(err) {
+function updateNote(note,id, next){
+
+	var query = "UPDATE NOTES SET ";
+	for(var field in note){
+		query = query + field + "='" + note[field] + "',";
+	}
+	query = query.slice(0, query.length-1);
+	console.log(query);
+	var update = db.prepare(query + " WHERE ID = " + id);
+	update.run(function(err) {
 		if(err) return next("Invalid ID. SQLITE3 ERROR: " + err);
-		db.all("SELECT * FROM NOTES WHERE ID=" + note.id, function(err, selectRes){
-			if(err) sendResponse(err.toString(),req, res);
+		db.all("SELECT * FROM NOTES WHERE ID=" + id, function(err, selectRes){
+			if(err) return next(err.toString());
 			else return next(null,selectRes);
 			
 		});	
@@ -103,14 +109,13 @@ router.post('/:version/notes/', function(req,res){
 router.put('/:version/notes/:id', function(req,res){
 	var note = {};
 	if(req.query.title){
-		note.title = req.query.title;
+		note.TITLE = req.query.title;
 	}
 	if(req.query.message){
-		note.message = req.query.message;
+		note.MESSAGE = req.query.message;
 	}
-	note.modifyDate = new Date().toJSON().slice(0,10);
-	note.id = req.params.id;
-	updateNote(note, function(err, updateResult){
+	note.MODIFY_DATE = new Date().toJSON().slice(0,10);
+	updateNote(note,req.params.id, function(err, updateResult){
 		if(err) checkError(err,req,res); // sqlite3 can't handle these errors.
 		else sendResponse(updateResult,req,res);
 	});
