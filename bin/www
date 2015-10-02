@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+"use strict";
 var debug = require('debug')('levitated');
-var app = require('../app');
+var app = require('../index');
 
 app.set('port', process.env.PORT || 3000);
 

@@ -41,7 +41,6 @@
       "sub":true,
       "node":true,
       "nonstandard":true,
-      "undef": true,
       "unused": true
   }
 }
