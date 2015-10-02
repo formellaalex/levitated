@@ -14,8 +14,11 @@ function updateNote(note, next){
 	var update = db.prepare("UPDATE NOTES SET TITLE = ?, MESSAGE = ?, MODIFY_DATE = ? WHERE ID = ?");
 	update.run(note.title, note.message, note.modifyDate, note.id, function(err) {
 		if(err) return next("Invalid ID. SQLITE3 ERROR: " + err);
-		return next(null,note);
+		db.all("SELECT * FROM NOTES WHERE ID=" + note.id, function(err, selectRes){
+			if(err) sendResponse(err.toString(),req, res);
+			else return next(null,selectRes);
 			
+		});	
 	});
 }
 
