@@ -13,7 +13,13 @@ function updateNote(note,id, next){
 
 	var query = "UPDATE NOTES SET ";
 	for(var field in note){
-		query = query + field + "='" + note[field] + "',";
+		if(isNaN(note[field])){
+			query = query + field + "='" + note[field] + "',";
+		}
+		else{
+			query = query + field + "=" + note[field] + ",";
+		}
+		
 	}
 	query = query.slice(0, query.length-1);
 	console.log(query);
