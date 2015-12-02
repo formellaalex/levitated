@@ -81,6 +81,9 @@ router.get('/:version/notes', function(req,res){
 
 	db.all("SELECT * FROM NOTES", function(err, selectRes){
 		if(err) sendResponse(err.toString(),req, res, 400);
+		else if(selectRes.length == 0){
+			sendResponse("404 - no contentw",req, res,404);
+		}
 		else{
 			var responseArray = {};
 			responseArray.count = selectRes.length;
